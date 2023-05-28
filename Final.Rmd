@@ -44,3 +44,5 @@ conditions that can be sensed by the robot.
   - Bluetooth HC06
   
 # 1.1.3 Configuration enviroments
+
+Boxes 
