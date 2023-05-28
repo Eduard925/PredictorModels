@@ -45,4 +45,4 @@ conditions that can be sensed by the robot.
   
 # 1.1.3 Configuration enviroments
 
-Boxes 
+The configuration of our 3 environments will be placed in cascade form one after the other, where our robot will take 50 samples for each environment, each of them will be made of cardboard boxes and conditioned for each situation mentioned.
