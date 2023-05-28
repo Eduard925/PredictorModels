@@ -28,8 +28,8 @@ conditions that can be sensed by the robot.
 
 # 1.1 Controlled environments.
   
-  - Hot Room.
   - Cold Room.
+  - Hot Room.
   - Toxic Room.
 
 # 1.1.2 Robot characteristics.
@@ -64,65 +64,61 @@ The configuration of our 3 environments will be placed in cascade form one after
   
 # 2. Arduino code program.
 
-``` {echo="FALSE"}
-#include "DHT.h"
 
-#define DHTPIN 12     // Pin where the sensor is connected
-
-#define DHTTYPE DHT11   // Uncomment if using DHT 11
-
-// Define the analog pin for sensor input
-const int gasSensorPin = A0;
-
-// Define variables
-float gasResistance;
-float gasPPM;
-
-DHT dht(DHTPIN, DHTTYPE);
-
-void setup() {
-  Serial.begin(9600);
-  Serial.print("Humidity,Temperature,PPM");
-  Serial.print('\n');
-  dht.begin();
-}
-
-void loop() {
-  delay(2000);
-  
-  // Read humidity and temperature from the DHT sensor
-  float h = dht.readHumidity(); // Read humidity
-  float t = dht.readTemperature(); // Read temperature in Celsius
-  float f = dht.readTemperature(true); // Read temperature in Fahrenheit
-  
-  // Send the readings via the serial port
-  Serial.print(h);
-  Serial.print(",");
-  Serial.print(t);
-  Serial.print(",");
-  Serial.print(gasPPM);
-  Serial.print('\n');
-  
-  // Read the gas sensor value
-  int sensorValue = analogRead(gasSensorPin);
-
-  // Calculate the gas resistance (in kilohms)
-  gasResistance = ((1023.0 * 10.0) / sensorValue) - 10.0;
-
-  // Use the gas resistance to estimate the gas concentration in parts per million (PPM)
-  gasPPM = pow(10, ((log10(gasResistance) - 2.5651) / -0.4615));
-
-  // Delay before the next reading
-  delay(2000);
-}
+[Code Source on repository GitHub](https://github.com/Eduard925/PredictorModels/blob/main/Code%20Arduino.cpp)
 
 
-```
 
 # 3. Methods for prediction.
 
 
 ```{r message=FALSE, warning=FALSE}
 
-library(tidyverse)
+# Import the librarys
+library (tidyverse)
+library (caret)
+library(psych)
+library(ggplot2)
+
+# Obtain the current folder path and its parent folder path
+folder <- dirname(rstudioapi::getSourceEditorContext()$path)
+parentFolder <- dirname(folder)
+
+#Read CSV File
+Sensors <- read_csv(file = paste0(parentFolder, "/Datasets/Train_data.csv")) %>% as.data.frame()
+
+# Give our a summary for variables Humidity,Temperatura,PPM,Room
+summary(Sensors)
+
+# Histogram of the linear model Humidity
+hist(Sensors$Humidity,breaks = 100)
+
+# Histogram of the linear model Temperature
+hist(Sensors$Temperature,breaks = 100)
+
+# Histogram of the linear model PPM
+hist(Sensors$PPM,breaks = 100)
+
+pairs.panels(Sensors[c("Humidity",
+                      
+                      "Temperature",
+                      
+                      "PPM",
+                      
+                      "Room")]
+             
+             ,pch=21, bg=c("red","green3","blue", "orange")[unclass(Sensors$Room)])
+
+Predictor <- colnames(Sensors)[-3]
+
+# Select the corresponding columns
+Data1 <- Sensors[, c("Room", "Humidity")]
+Data2 <- Sensors[, c("Room", "Temperature")]
+Data3 <- Sensors[, c("Room", "PPM")]
+# Split data into training and test sets Humidity - Temperature - PPM
+set.seed(123)
+trainIndex1 <- createDataPartition(Data1$Room, p = 0.8, list = FALSE)
+trainData1 <- Data1[trainIndex1, ]
+testData1 <- Data1[-trainIndex1, ]
+testData2 <- Data2[-trainIndex1,]
 ```
