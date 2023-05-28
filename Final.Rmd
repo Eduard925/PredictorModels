@@ -1,30 +1,46 @@
 ---
-title: "Final Assignment"
+title: "Final Assignment Models Predictors"
 author: "Eduard Romero / Carlos Bejarano / Juan Cepeda"
 date: "2023-05-27"
 output: pdf_document
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{titling}
+  - \pretitle{\begin{center}\Large\color{blue}\textbf}
+  - \posttitle{\end{center}}
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# 1. Problem definition
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Mobile robotics is a popular solution for exploration of hostile environments (such as toxic or radioactive
+environments) where a direct human intervention is not possible. In this project it is asked that each team
+implements a robotic explorer and simulates 3 different environments.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+-   1.1 A total of 3 different environments needs to be simulated. Each environment needs to provide at least 3
+conditions that can be sensed by the robot.
+-   1.1.2 The robot needs to be able of moving from one environment to another.
+-   1.1.3 Configuration of the environments (order) must be interchangeable.
+-   1.1.4 The robot needs to acquire 3 or more sensor signals that can be use as predictors for supervised algorithms
 
-```{r cars}
-summary(cars)
-```
+# 1.1 Controlled environments
+  
+  - Hot Room.
+  - Cold Room.
+  - Toxic Room.
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# 1.1.2 Robot characteristics
+  
+  The main features of our robot are as follows:
+  
+  - MCU Arduino.
+  - Micromotors DC POLOLU
+  - PCB 
+  - Battery LIPO 7.4V 300mAh
+  - Driver motor TB6612FNG
+  - Bluetooth HC06
+  
+# 1.1.3 Configuration enviroments
