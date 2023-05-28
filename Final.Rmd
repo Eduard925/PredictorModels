@@ -14,7 +14,7 @@ header-includes:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# 1. Problem definition
+# 1. Problem definition.
 
 Mobile robotics is a popular solution for exploration of hostile environments (such as toxic or radioactive
 environments) where a direct human intervention is not possible. In this project it is asked that each team
@@ -26,13 +26,13 @@ conditions that can be sensed by the robot.
 -   1.1.3 Configuration of the environments (order) must be interchangeable.
 -   1.1.4 The robot needs to acquire 3 or more sensor signals that can be use as predictors for supervised algorithms.
 
-# 1.1 Controlled environments
+# 1.1 Controlled environments.
   
   - Hot Room.
   - Cold Room.
   - Toxic Room.
 
-# 1.1.2 Robot characteristics
+# 1.1.2 Robot characteristics.
   
   The main features of our robot are as follows:
   
@@ -43,11 +43,11 @@ conditions that can be sensed by the robot.
   - Driver motor TB6612FNG.
   - Bluetooth HC06.
   
-# 1.1.3 Configuration enviroments
+# 1.1.3 Configuration enviroments.
 
 The configuration of our 3 environments will be placed in cascade form one after the other, where our robot will take 50 samples for each environment, each of them will be made of cardboard boxes and conditioned for each situation mentioned.
 
-# 1.1.4 Configuration Sensors
+# 1.1.4 Configuration Sensors.
   
   Our robot has 3 analog sensors:
   
@@ -62,3 +62,67 @@ The configuration of our 3 environments will be placed in cascade form one after
   - Decision tree.
   - Lasso regression.
   
+# 2. Arduino code program.
+
+``` {echo="FALSE"}
+#include "DHT.h"
+
+#define DHTPIN 12     // Pin where the sensor is connected
+
+#define DHTTYPE DHT11   // Uncomment if using DHT 11
+
+// Define the analog pin for sensor input
+const int gasSensorPin = A0;
+
+// Define variables
+float gasResistance;
+float gasPPM;
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);
+  Serial.print("Humidity,Temperature,PPM");
+  Serial.print('\n');
+  dht.begin();
+}
+
+void loop() {
+  delay(2000);
+  
+  // Read humidity and temperature from the DHT sensor
+  float h = dht.readHumidity(); // Read humidity
+  float t = dht.readTemperature(); // Read temperature in Celsius
+  float f = dht.readTemperature(true); // Read temperature in Fahrenheit
+  
+  // Send the readings via the serial port
+  Serial.print(h);
+  Serial.print(",");
+  Serial.print(t);
+  Serial.print(",");
+  Serial.print(gasPPM);
+  Serial.print('\n');
+  
+  // Read the gas sensor value
+  int sensorValue = analogRead(gasSensorPin);
+
+  // Calculate the gas resistance (in kilohms)
+  gasResistance = ((1023.0 * 10.0) / sensorValue) - 10.0;
+
+  // Use the gas resistance to estimate the gas concentration in parts per million (PPM)
+  gasPPM = pow(10, ((log10(gasResistance) - 2.5651) / -0.4615));
+
+  // Delay before the next reading
+  delay(2000);
+}
+
+
+```
+
+# 3. Methods for prediction.
+
+
+```{r message=FALSE, warning=FALSE}
+
+library(tidyverse)
+```
