@@ -84,8 +84,10 @@ library(ggplot2)
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 parentFolder <- dirname(folder)
 
-#Read CSV File
+#Read CSV File for trainning
 Sensors <- read_csv(file = paste0(parentFolder, "/Datasets/Train_data.csv")) %>% as.data.frame()
+#Read CSV File for Predict
+DataTest <- read_csv(file = paste0(parentFolder, "/Datasets/Model.csv")) %>% as.data.frame()
 
 # Give our a summary for variables Humidity,Temperatura,PPM,Room
 summary(Sensors)
@@ -109,16 +111,35 @@ pairs.panels(Sensors[c("Humidity",
              
              ,pch=21, bg=c("red","green3","blue", "orange")[unclass(Sensors$Room)])
 
-Predictor <- colnames(Sensors)[-3]
+predictors <- colnames(Sensors)[-3]
 
-# Select the corresponding columns
-Data1 <- Sensors[, c("Room", "Humidity")]
-Data2 <- Sensors[, c("Room", "Temperature")]
-Data3 <- Sensors[, c("Room", "PPM")]
-# Split data into training and test sets Humidity - Temperature - PPM
-set.seed(123)
-trainIndex1 <- createDataPartition(Data1$Room, p = 0.8, list = FALSE)
-trainData1 <- Data1[trainIndex1, ]
-testData1 <- Data1[-trainIndex1, ]
-testData2 <- Data2[-trainIndex1,]
+sample.index <- sample(1:nrow(Sensors)
+                       ,nrow(Sensors)*0.3
+                       ,replace = F)
+
+train.data <- Sensors[sample.index,c(predictors,"Room"),drop=F]
+test.data <- Sensors[-sample.index,c(predictors,"Room"),drop=F]
+
+# Use 10-Fold cross-validation for all methods
+
+Model <-trainControl(method="cv",number=10)
+
+# Train Model Knn without processing
+Model1 <- train(Room~.,data = Sensors,method="knn",trControl=Model)
+Model1
+
+# Predict Model Knn without processing
+
+Predict1 <- predict(Model1,newdata=DataTest,)
+Predict1
+
+# Train Model Knn with processing
+
+Model2 <- train(Room~.,data = Sensors,method="knn",preProcess=c("center","scale"),trControl=Model)
+Model2
+
+# Predict Model Knn with processing
+
+Predict2 <- predict(Model2,newdata =DataTest,)
+Predict2
 ```
