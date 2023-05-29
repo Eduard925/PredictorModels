@@ -55,12 +55,6 @@ The configuration of our 3 environments will be placed in cascade form one after
   - Sensor Humidity DHT11.
   - Sensor Temperature LM35(DHT11).
   
-  The prediction methods will be as follows :
-  
-  - KNN.
-  - Logistic regression.
-  - Decision tree.
-  - Lasso regression.
   
 # 2. Arduino code program.
 
