@@ -85,10 +85,10 @@ The configuration of our 3 environments will be placed in cascade form one after
   - 3.5 Decision Tree:
   Decision Tree is a supervised learning algorithm that builds a tree-like model for classification or regression. It splits the data based on features at each node and makes predictions by traversing the tree from the root to the leaf nodes. It selects the best feature to split based on certain criteria such as information gain or Gini index.
   
-  -3.6 Random Forest:
+  - 3.6 Random Forest:
   Random Forest is an ensemble learning method that combines multiple decision trees to make predictions. It creates a set of decision trees using bootstrapped samples of the data and random feature subsets. The final prediction is made by aggregating the predictions of individual trees.
   
-  -3.7 Naive Bayes:
+  - 3.7 Naive Bayes:
   Naive Bayes is a probabilistic classification algorithm based on Bayes' theorem. It assumes that the features are conditionally independent given the class label. Naive Bayes calculates the probability of each class and predicts the class with the highest probability.
   
   
