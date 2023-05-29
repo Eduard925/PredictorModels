@@ -70,7 +70,27 @@ The configuration of our 3 environments will be placed in cascade form one after
 
 
 # 3. Methods for prediction.
-
+  - 3.1 KNN without preprocessing:
+  K-Nearest Neighbors (KNN) is a non-parametric classification algorithm. It makes predictions based on the majority class of the K nearest neighbors in the feature space. Without preprocessing, KNN uses the raw data as input, without any transformation or scaling.
+  
+  - 3.2 KNN with preprocessing:
+  KNN can benefit from preprocessing techniques such as feature scaling, normalization, or dimensionality reduction. Preprocessing helps to improve the performance and accuracy of KNN by ensuring that all features are on a similar scale or reducing the dimensionality of the data.
+  
+  - 3.3 KNN Grid:
+  KNN Grid is a technique that helps to determine the optimal value of K in KNN by performing a grid search. It involves training and evaluating multiple KNN models with different values of K and selecting the value that produces the best performance or accuracy on the validation set.
+  
+  - 3.4 Logistic Regression:
+  Logistic Regression is a supervised learning algorithm used for binary classification problems. It models the relationship between the independent variables (features) and the probability of a certain outcome using the logistic function. It estimates the parameters of the logistic function using maximum likelihood estimation.
+  
+  - 3.5 Decision Tree:
+  Decision Tree is a supervised learning algorithm that builds a tree-like model for classification or regression. It splits the data based on features at each node and makes predictions by traversing the tree from the root to the leaf nodes. It selects the best feature to split based on certain criteria such as information gain or Gini index.
+  
+  -3.6 Random Forest:
+  Random Forest is an ensemble learning method that combines multiple decision trees to make predictions. It creates a set of decision trees using bootstrapped samples of the data and random feature subsets. The final prediction is made by aggregating the predictions of individual trees.
+  
+  -3.7 Naive Bayes:
+  Naive Bayes is a probabilistic classification algorithm based on Bayes' theorem. It assumes that the features are conditionally independent given the class label. Naive Bayes calculates the probability of each class and predicts the class with the highest probability.
+  
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -79,26 +99,41 @@ library (tidyverse)
 library (caret)
 library(psych)
 library(ggplot2)
+library(MASS)
+library(nnet)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+library(e1071)
+library(tm)
+library(naivebayes)
 
 # Obtain the current folder path and its parent folder path
+
 folder <- dirname(rstudioapi::getSourceEditorContext()$path)
 parentFolder <- dirname(folder)
 
 #Read CSV File for trainning
+
 Sensors <- read_csv(file = paste0(parentFolder, "/Datasets/Train_data.csv")) %>% as.data.frame()
 #Read CSV File for Predict
+
 DataTest <- read_csv(file = paste0(parentFolder, "/Datasets/Model.csv")) %>% as.data.frame()
 
 # Give our a summary for variables Humidity,Temperatura,PPM,Room
+
 summary(Sensors)
 
 # Histogram of the linear model Humidity
+
 hist(Sensors$Humidity,breaks = 100)
 
 # Histogram of the linear model Temperature
+
 hist(Sensors$Temperature,breaks = 100)
 
 # Histogram of the linear model PPM
+
 hist(Sensors$PPM,breaks = 100)
 
 pairs.panels(Sensors[c("Humidity",
@@ -142,4 +177,86 @@ Model2
 
 Predict2 <- predict(Model2,newdata =DataTest,)
 Predict2
+
+# Train Model Knn Grid
+
+knnGrid <- expand.grid(k=c(1,5,10,30,100))
+Model3 <- train(Room~.,data = Sensors,method="knn",preProcess=c("center","scale"),tuneGrid=knnGrid,trControl=Model)
+Model3
+
+# Predict model Knn Grid
+
+Predict3 <- predict(Model3,newdata = DataTest,)
+Predict3
+
+# Train Model Logistic regression
+
+Model4 <- multinom(Room~.,data=Sensors,iter=500)
+summary(Model4)
+
+# Predict Model Logistic regression
+
+Predict4 <- predict(Model4,newdata=DataTest,)
+Predict4
+prediction<-DataTest$Predict4 <- c(Predict4)
+confusionMatrix(prediction,DataTest$Predict4)
+
+# Train Model Decision tree
+
+CartGrid = expand.grid(maxdepth=c(1,5,10,20))
+Model5 <- train(Room~.,data=Sensors,method="rpart2",trControl=Model,tuneGrid=CartGrid)
+Model5
+Model3$finalModel
+
+# Predict Model Decision tree
+
+Predict5 <- predict(Model5,newdata=DataTest,type='prob')
+Predict5
+
+# Train Model Random Forests
+
+set.seed(2018)
+Sensors$Room=factor(Sensors$Room)
+randomf <-Sensors[complete.cases(Sensors),]
+training.ids<-createDataPartition(Sensors$Room,p=0.7,list = F)
+modrf <- randomForest(x=Sensors[training.ids,1:3],
+                    y=Sensors[training.ids,4],
+                    ntree =500,
+                    keep.forest = TRUE)
+
+# Predict Model Random Forest
+
+Predict6 <- predict(modrf,newdata=DataTest,)
+prediction1 <- DataTest$Predict6 <- c(Predict6)
+confusionMatrix(prediction1,DataTest$Predict6)
+
+# train Model Naivebayes
+
+set.seed(2018)
+t.idsl <- createDataPartition(Sensors$Room,p=0.7,list=F)
+
+Model7 <- naiveBayes(Room~.,data=Sensors[t.idsl,],laplace = 1)
+Model7
+
+# Predict Model NaiveBayes
+
+Predict7 <- predict(Model7, Sensors[-t.idsl,])
+Predict7 <- predict(Model7,newdata=DataTest,)
+prediction2<-DataTest$Predict7 <- c(Predict7)
+confusionMatrix(prediction2,DataTest$Predict7)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
