@@ -91,6 +91,7 @@ The configuration of our 3 environments will be placed in cascade form one after
   -3.7 Naive Bayes:
   Naive Bayes is a probabilistic classification algorithm based on Bayes' theorem. It assumes that the features are conditionally independent given the class label. Naive Bayes calculates the probability of each class and predicts the class with the highest probability.
   
+  
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -246,7 +247,54 @@ prediction2<-DataTest$Predict7 <- c(Predict7)
 confusionMatrix(prediction2,DataTest$Predict7)
 ```
 
+# Conclusions :
 
+1. KNN without preprocessing:
+
+- KNN is a simple and intuitive algorithm that can be used for classification tasks.
+- It doesn't require preprocessing, but it can be sensitive to the scale and distribution of the features.
+- It can struggle with high-dimensional data or datasets with irrelevant features.
+- KNN's performance heavily depends on choosing an appropriate value for K.
+
+2. KNN with preprocessing:
+
+- Preprocessing techniques like scaling and dimensionality reduction can improve the performance of KNN.
+- Scaling ensures that all features contribute equally to the distance calculation.
+- Dimensionality reduction techniques can help reduce noise and improve computational efficiency.
+
+3. KNN Grid:
+
+- KNN Grid allows for an automated selection of the optimal value of K.
+- It involves evaluating multiple KNN models with different values of K and selecting the best performing model.
+- Grid search can be computationally expensive, especially for large datasets.
+
+4. Logistic Regression:
+
+- Logistic Regression is a powerful algorithm for binary classification tasks.
+- It assumes a linear relationship between the features and the log-odds of the target variable.
+- It can handle large datasets efficiently and provides interpretable results.
+- Logistic Regression performs well when the relationship between features and the target variable is roughly linear.
+
+5. Decision Tree:
+
+- Decision Trees are interpretable and can handle both classification and regression tasks.
+- They can capture non-linear relationships between features and the target variable.
+- Decision Trees are prone to overfitting, especially when the tree becomes too deep.
+- Ensemble methods like Random Forest can address this issue and improve the performance.
+
+6. Random Forest:
+
+- Random Forest is an ensemble method that combines multiple decision trees.
+- It reduces overfitting by aggregating the predictions of multiple trees.
+- Random Forest provides feature importance measures, which can be helpful for feature selection.
+- It can handle high-dimensional data and is generally robust to outliers and missing values.
+
+7. Naive Bayes:
+
+- Naive Bayes is a fast and simple algorithm that performs well on large datasets.
+- It assumes feature independence, which may not hold in all cases.
+- Despite the independence assumption, Naive Bayes can still provide competitive results.
+- It is particularly suitable for text classification tasks and works well with high-dimensional data.
 
 
 
